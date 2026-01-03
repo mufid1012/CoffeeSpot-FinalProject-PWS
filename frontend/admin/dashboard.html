@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CoffeeSpot API</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .chart-container {
+            height: 200px;
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: flex-end;
+            padding: var(--space-md);
+            gap: var(--space-sm);
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            min-height: 10px;
+            transition: height 0.3s ease;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-lg);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Admin Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">☕</span>
+                    <span>CoffeeSpot</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Dashboard</div>
+                    <a href="dashboard.html" class="sidebar-link active">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span>Overview</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Data Management</div>
+                    <a href="coffeeshops.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">☕</span>
+                        <span>Coffee Shops</span>
+                    </a>
+                    <a href="categories.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📁</span>
+                        <span>Categories</span>
+                    </a>
+                    <a href="facilities.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏷️</span>
+                        <span>Facilities</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Management</div>
+                    <a href="users.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="logs.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span>API Logs</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-md" style="padding: var(--space-sm);">
+                    <div
+                        style="width: 36px; height: 36px; background: var(--color-danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        A</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: var(--font-size-sm); font-weight: 500;">Admin</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">Administrator</div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="Auth.logout()" title="Logout">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Admin Dashboard</h1>
+                <p class="page-subtitle">Overview sistem CoffeeSpot API</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-4 gap-lg" style="margin-bottom: var(--space-xl);">
+                <div class="stat-card">
+                    <div class="stat-icon primary">☕</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalCoffeeshops">-</div>
+                        <div class="stat-label">Total Coffee Shops</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon success">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalUsers">-</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon warning">🔑</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="activeApiKeys">-</div>
+                        <div class="stat-label">Active API Keys</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon info">📈</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="todayRequests">-</div>
+                        <div class="stat-label">Today's Requests</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-lg">
+                <!-- API Usage Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">API Usage (Last 7 Days)</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" id="chartBars">
+                            <div class="chart-bar" style="height: 20%;"></div>
+                            <div class="chart-bar" style="height: 20%;"></div>
+                            <div class="chart-bar" style="height: 20%;"></div>
+                            <div class="chart-bar" style="height: 20%;"></div>
+                            <div class="chart-bar" style="height: 20%;"></div>
+                            <div class="chart-bar" style="height: 20%;"></div>
+                            <div class="chart-bar" style="height: 20%;"></div>
+                        </div>
+                        <div class="flex justify-between" id="chartLabels"
+                            style="margin-top: var(--space-sm); font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                            <span>-</span><span>-</span><span>-</span><span>-</span><span>-</span><span>-</span><span>-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Activity</h2>
+                    </div>
+                    <div class="card-body" id="recentActivity">
+                        <p style="text-align: center; color: var(--color-text-muted);">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Endpoints -->
+            <div class="card" style="margin-top: var(--space-xl);">
+                <div class="card-header">
+                    <h2 class="card-title">Top Endpoints (Today)</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Endpoint</th>
+                                    <th>Method</th>
+                                    <th>Requests</th>
+                                    <th>Avg Response Time</th>
+                                    <th>Success Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topEndpointsTable">
+                                <tr>
+                                    <td colspan="5" style="text-align: center;">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Check admin authentication
+        if (!Auth.requireAdmin()) { }
+
+        // Load dashboard stats from API
+        async function loadStats() {
+            try {
+                const response = await API.get('/admin/stats');
+                const stats = response.data;
+
+                document.getElementById('totalCoffeeshops').textContent = stats.total_coffeeshops || 0;
+                document.getElementById('totalUsers').textContent = (stats.total_users || 0).toLocaleString();
+                document.getElementById('activeApiKeys').textContent = (stats.active_api_keys || 0).toLocaleString();
+                document.getElementById('todayRequests').textContent = (stats.today_requests || 0).toLocaleString();
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        // Load chart data for last 7 days
+        async function loadChart() {
+            try {
+                const response = await API.get('/admin/stats/chart');
+                const data = response.data;
+
+                const chartContainer = document.getElementById('chartBars');
+                const chartLabels = document.getElementById('chartLabels');
+
+                const maxCount = Math.max(...data.map(d => d.count), 1);
+
+                chartContainer.innerHTML = data.map(d => {
+                    const height = (d.count / maxCount) * 100;
+                    return `<div class="chart-bar" style="height: ${Math.max(height, 5)}%;" title="${d.date}: ${d.count} requests"></div>`;
+                }).join('');
+
+                chartLabels.innerHTML = data.map(d => `<span>${d.day}</span>`).join('');
+            } catch (error) {
+                console.error('Failed to load chart:', error);
+            }
+        }
+
+        // Load recent activity
+        async function loadRecentActivity() {
+            try {
+                const response = await API.get('/admin/stats/recent');
+                const logs = response.data;
+
+                const container = document.getElementById('recentActivity');
+
+                if (logs.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--color-text-muted);">No recent activity</p>';
+                    return;
+                }
+
+                container.innerHTML = logs.slice(0, 4).map(log => {
+                    const timeAgo = getTimeAgo(new Date(log.created_at));
+                    const isSuccess = log.status_code >= 200 && log.status_code < 300;
+                    const icon = isSuccess ? '✅' : '⚠️';
+                    const bgColor = isSuccess ? 'var(--color-success-bg)' : 'var(--color-danger-bg)';
+
+                    return `
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: ${bgColor};">${icon}</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: var(--font-size-sm); font-weight: 500;">${log.method} ${log.endpoint}</div>
+                                <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                                    ${log.status_code} • ${log.response_time}ms
+                                </div>
+                            </div>
+                            <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">${timeAgo}</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Failed to load recent activity:', error);
+            }
+        }
+
+        // Load top endpoints
+        async function loadTopEndpoints() {
+            try {
+                const response = await API.get('/admin/stats/endpoints');
+                const endpoints = response.data;
+
+                const tbody = document.getElementById('topEndpointsTable');
+
+                if (endpoints.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No data for today</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = endpoints.map(ep => `
+                    <tr>
+                        <td><code>${ep.endpoint}</code></td>
+                        <td><span class="badge badge-success">${ep.method}</span></td>
+                        <td>${ep.requests.toLocaleString()}</td>
+                        <td>${ep.avg_response_time}ms</td>
+                        <td><span class="text-success">${ep.success_rate}%</span></td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load top endpoints:', error);
+            }
+        }
+
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            return `${Math.floor(hours / 24)}d ago`;
+        }
+
+        // Load all data
+        loadStats();
+        loadChart();
+        loadRecentActivity();
+        loadTopEndpoints();
+    </script>
+</body>
+
+</html>

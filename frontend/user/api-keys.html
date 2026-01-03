@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Keys - CoffeeSpot API</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">☕</span>
+                    <span>CoffeeSpot</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Menu</div>
+                    <a href="dashboard.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="api-keys.html" class="sidebar-link active">
+                        <span class="sidebar-link-icon">🔑</span>
+                        <span>API Keys</span>
+                    </a>
+                    <a href="../docs/index.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📖</span>
+                        <span>Documentation</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-md" style="padding: var(--space-sm);">
+                    <div
+                        style="width: 36px; height: 36px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        <span id="userInitial">U</span>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: var(--font-size-sm); font-weight: 500;" id="userName">User</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);" id="userEmail">
+                            user@email.com</div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="Auth.logout()" title="Logout">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header flex justify-between items-center">
+                <div>
+                    <h1 class="page-title">API Keys</h1>
+                    <p class="page-subtitle">Kelola API Keys untuk mengakses CoffeeSpot API</p>
+                </div>
+                <button class="btn btn-primary" onclick="showCreateModal()">
+                    <span>➕</span>
+                    Generate New Key
+                </button>
+            </div>
+
+            <!-- Info Alert -->
+            <div class="alert alert-info" style="margin-bottom: var(--space-xl);">
+                <span class="alert-icon">ℹ️</span>
+                <div class="alert-content">
+                    <h4 class="alert-title">Rate Limit</h4>
+                    <p class="alert-message">Setiap API key memiliki limit 100 requests per hari. Limit akan reset
+                        setiap tengah malam.</p>
+                </div>
+            </div>
+
+            <!-- API Keys List -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Your API Keys</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>API Key</th>
+                                    <th>Status</th>
+                                    <th>Usage Today</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="apiKeysTable">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 40px;">
+                                        <div class="spinner" style="margin: 0 auto;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Modal -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Generate New API Key</h3>
+                <button class="modal-close" onclick="hideCreateModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createKeyForm">
+                    <div class="form-group">
+                        <label class="form-label" for="keyName">Key Name</label>
+                        <input type="text" id="keyName" class="form-control" placeholder="e.g., Production App"
+                            required>
+                        <small style="color: var(--color-text-muted); font-size: var(--font-size-xs);">
+                            Berikan nama yang mudah diingat untuk API key ini
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="hideCreateModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="createApiKey()" id="createBtn">Generate Key</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal (Show Key) -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">🎉 API Key Created!</h3>
+                <button class="modal-close" onclick="hideSuccessModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <h4 class="alert-title">Important!</h4>
+                        <p class="alert-message">Simpan API key ini sekarang. Anda tidak akan bisa melihatnya lagi
+                            setelah menutup dialog ini.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Your API Key</label>
+                    <div class="api-key-display" style="background: var(--color-bg-primary); padding: var(--space-md);">
+                        <code class="api-key-value" id="newKeyValue" style="font-size: var(--font-size-sm);"></code>
+                        <button class="btn btn-primary btn-sm" onclick="copyNewKey()">📋 Copy</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="hideSuccessModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revoke Confirmation Modal -->
+    <div class="modal-overlay" id="revokeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Revoke API Key</h3>
+                <button class="modal-close" onclick="hideRevokeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin merevoke API key <strong id="revokeKeyName"></strong>?</p>
+                <p class="text-muted" style="font-size: var(--font-size-sm);">Aksi ini tidak dapat dibatalkan. Semua
+                    aplikasi yang menggunakan key ini akan kehilangan akses.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="hideRevokeModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmRevoke()" id="revokeBtn">Revoke Key</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Check authentication
+        if (!Auth.requireAuth()) { }
+
+        // Set user info
+        const user = API.getUser();
+        if (user) {
+            document.getElementById('userInitial').textContent = user.username?.charAt(0).toUpperCase() || 'U';
+            document.getElementById('userName').textContent = user.username || 'User';
+            document.getElementById('userEmail').textContent = user.email || '';
+        }
+
+        let apiKeys = [];
+        let selectedKeyId = null;
+
+        // Load API Keys from backend
+        async function loadApiKeys() {
+            try {
+                const response = await API.get('/user/api-keys');
+                apiKeys = response.data;
+                renderApiKeys();
+            } catch (error) {
+                console.error('Failed to load API keys:', error);
+                document.getElementById('apiKeysTable').innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--color-danger);">
+                            Failed to load API keys. Please try again.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderApiKeys() {
+            const tbody = document.getElementById('apiKeysTable');
+
+            if (apiKeys.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🔑</div>
+                                <h3 class="empty-state-title">No API Keys Yet</h3>
+                                <p class="empty-state-description">Generate your first API key to start using the API.</p>
+                                <button class="btn btn-primary" onclick="showCreateModal()">Generate API Key</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = apiKeys.map(key => {
+                const maskedKey = key.api_key.substring(0, 12) + '••••••••••••';
+                return `
+                <tr>
+                    <td><strong>${key.name}</strong></td>
+                    <td>
+                        <div class="api-key-display">
+                            <span class="api-key-value">${maskedKey}</span>
+                            <button class="btn btn-ghost btn-sm" onclick="copyKey('${key.api_key}')" title="Copy">📋</button>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-${key.status === 'active' ? 'success' : 'danger'}">
+                            ${key.status}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                                <div style="width: ${(key.daily_usage / key.usage_limit) * 100}%; height: 100%; background: ${key.daily_usage > 80 ? 'var(--color-warning)' : 'var(--color-success)'};"></div>
+                            </div>
+                            <span style="font-size: var(--font-size-sm); color: var(--color-text-muted);">
+                                ${key.daily_usage}/${key.usage_limit}
+                            </span>
+                        </div>
+                    </td>
+                    <td>${UI.formatDate(key.created_at)}</td>
+                    <td>
+                        ${key.status === 'active' ? `
+                            <button class="btn btn-danger btn-sm" onclick="showRevokeModal(${key.id}, '${key.name}')">
+                                Revoke
+                            </button>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        function maskKey(key) {
+            return key.substring(0, 12) + '••••••••••••';
+        }
+
+        function copyKey(key) {
+            UI.copyToClipboard(key);
+            UI.showToast('API Key copied to clipboard!');
+        }
+
+        // Create Modal
+        function showCreateModal() {
+            document.getElementById('createModal').classList.add('active');
+            document.getElementById('keyName').focus();
+        }
+
+        function hideCreateModal() {
+            document.getElementById('createModal').classList.remove('active');
+            document.getElementById('createKeyForm').reset();
+        }
+
+        async function createApiKey() {
+            const name = document.getElementById('keyName').value.trim();
+            if (!name) return;
+
+            const btn = document.getElementById('createBtn');
+            UI.showLoading(btn);
+
+            try {
+                // Create API key via backend
+                const response = await API.post('/user/api-keys', { name });
+                const newKey = response.data.api_key;
+
+                hideCreateModal();
+                document.getElementById('newKeyValue').textContent = newKey;
+                document.getElementById('successModal').classList.add('active');
+
+                // Reload API keys list
+                await loadApiKeys();
+            } catch (error) {
+                alert('Failed to create API key: ' + (error.message || 'Unknown error'));
+            } finally {
+                UI.hideLoading(btn);
+            }
+        }
+
+        function hideSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+
+        function copyNewKey() {
+            const key = document.getElementById('newKeyValue').textContent;
+            UI.copyToClipboard(key);
+        }
+
+        // Revoke Modal
+        function showRevokeModal(id, name) {
+            selectedKeyId = id;
+            document.getElementById('revokeKeyName').textContent = name;
+            document.getElementById('revokeModal').classList.add('active');
+        }
+
+        function hideRevokeModal() {
+            document.getElementById('revokeModal').classList.remove('active');
+            selectedKeyId = null;
+        }
+
+        async function confirmRevoke() {
+            if (!selectedKeyId) return;
+
+            const btn = document.getElementById('revokeBtn');
+            UI.showLoading(btn);
+
+            try {
+                // Revoke via backend API
+                await API.delete(`/user/api-keys/${selectedKeyId}`);
+
+                hideRevokeModal();
+                await loadApiKeys();
+                UI.showToast('API key revoked successfully');
+            } catch (error) {
+                alert('Failed to revoke API key: ' + (error.message || 'Unknown error'));
+            } finally {
+                UI.hideLoading(btn);
+            }
+        }
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // Close modals on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            }
+        });
+
+        loadApiKeys();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CoffeeSpot API Documentation - Panduan lengkap untuk menggunakan API">
+    <title>Documentation - CoffeeSpot API</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .docs-layout {
+            display: flex;
+            min-height: 100vh;
+            padding-top: var(--header-height);
+        }
+
+        .docs-sidebar {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: 260px;
+            height: calc(100vh - var(--header-height));
+            background: var(--color-bg-card);
+            border-right: 1px solid var(--color-border);
+            padding: var(--space-lg);
+            overflow-y: auto;
+        }
+
+        .docs-nav-title {
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--space-sm);
+            margin-top: var(--space-lg);
+        }
+
+        .docs-nav-title:first-child {
+            margin-top: 0;
+        }
+
+        .docs-nav-link {
+            display: block;
+            padding: var(--space-xs) var(--space-sm);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .docs-nav-link:hover {
+            background: var(--color-bg-card-hover);
+            color: var(--color-text-primary);
+        }
+
+        .docs-nav-link.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--color-primary);
+        }
+
+        .docs-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: var(--space-xl) var(--space-2xl);
+            max-width: 900px;
+        }
+
+        .docs-section {
+            margin-bottom: var(--space-2xl);
+            scroll-margin-top: calc(var(--header-height) + var(--space-lg));
+        }
+
+        .docs-section h2 {
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .endpoint-card {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            margin-bottom: var(--space-lg);
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md) var(--space-lg);
+            background: var(--color-bg-secondary);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .endpoint-method {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .method-get {
+            background: var(--color-success-bg);
+            color: var(--color-success);
+        }
+
+        .endpoint-path {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-primary);
+        }
+
+        .endpoint-body {
+            padding: var(--space-lg);
+        }
+
+        .endpoint-desc {
+            margin-bottom: var(--space-md);
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .params-table {
+            width: 100%;
+            margin-bottom: var(--space-lg);
+            border-collapse: collapse;
+        }
+
+        .params-table th,
+        .params-table td {
+            padding: var(--space-sm) var(--space-md);
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+            font-size: var(--font-size-sm);
+        }
+
+        .params-table th {
+            color: var(--color-text-muted);
+            font-weight: 600;
+            background: var(--color-bg-secondary);
+        }
+
+        .params-table td {
+            color: var(--color-text-secondary);
+        }
+
+        .param-required {
+            color: var(--color-danger);
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+        }
+
+        .param-type {
+            color: var(--color-primary);
+            font-family: var(--font-mono);
+            font-size: var(--font-size-xs);
+            background: rgba(99, 102, 241, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Code blocks in docs */
+        .docs-content pre {
+            background: var(--color-bg-secondary) !important;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            margin: var(--space-lg) 0;
+        }
+
+        .code-content pre {
+            margin: 0;
+            padding: var(--space-lg);
+        }
+
+        .endpoint-body h4 {
+            margin-top: var(--space-xl);
+            margin-bottom: var(--space-md);
+        }
+
+        .endpoint-body h4:first-child {
+            margin-top: 0;
+        }
+
+        .docs-content code {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-primary);
+        }
+
+        .docs-content p code {
+            background: var(--color-bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--color-primary);
+        }
+
+        /* Info boxes */
+        .info-box {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-left: 4px solid var(--color-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .info-box code {
+            background: var(--color-bg-card);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Warning boxes */
+        .warning-box {
+            background: var(--color-warning-bg);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid var(--color-warning);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        @media (max-width: 1024px) {
+            .docs-sidebar {
+                display: none;
+            }
+
+            .docs-content {
+                margin-left: 0;
+                padding: var(--space-lg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">☕</span>
+                <span>CoffeeSpot</span>
+            </a>
+            <nav class="nav-links">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="#" class="nav-link active">Documentation</a>
+            </nav>
+            <div class="nav-actions" id="navActions">
+                <a href="../auth/login.html" class="btn btn-ghost">Login</a>
+                <a href="../auth/register.html" class="btn btn-primary">Get API Key</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <!-- Sidebar -->
+        <aside class="docs-sidebar">
+            <div class="docs-nav-title">Getting Started</div>
+            <a href="#introduction" class="docs-nav-link active">Introduction</a>
+            <a href="#authentication" class="docs-nav-link">Authentication</a>
+            <a href="#rate-limiting" class="docs-nav-link">Rate Limiting</a>
+            <a href="#errors" class="docs-nav-link">Error Handling</a>
+
+            <div class="docs-nav-title">Endpoints</div>
+            <a href="#coffeeshops" class="docs-nav-link">Coffee Shops</a>
+            <a href="#categories" class="docs-nav-link">Categories</a>
+            <a href="#facilities" class="docs-nav-link">Facilities</a>
+            <a href="#cities" class="docs-nav-link">Cities</a>
+        </aside>
+
+        <!-- Content -->
+        <main class="docs-content">
+            <!-- Introduction -->
+            <section id="introduction" class="docs-section">
+                <h2>Introduction</h2>
+                <p>CoffeeSpot API menyediakan akses ke data direktori coffee shop di Indonesia. API ini menggunakan REST
+                    architecture dan mengembalikan response dalam format JSON.</p>
+
+                <div class="alert alert-info">
+                    <span class="alert-icon">ℹ️</span>
+                    <div class="alert-content">
+                        <h4 class="alert-title">Base URL</h4>
+                        <p class="alert-message"><code>https://api.coffeespot.id/api</code></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Authentication -->
+            <section id="authentication" class="docs-section">
+                <h2>Authentication</h2>
+                <p>Semua request ke API memerlukan API Key yang dikirim melalui header <code>x-api-key</code>.</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-lang">Request Header</span>
+                    </div>
+                    <div class="code-content">
+                        <pre><code>x-api-key: YOUR_API_KEY</code></pre>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: var(--space-lg);">Contoh Request</h4>
+                <div class="code-block">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <span class="code-lang">cURL</span>
+                    </div>
+                    <div class="code-content">
+                        <pre><code>curl -X GET "https://api.coffeespot.id/api/coffeeshops" \
+  -H "x-api-key: cs_live_xxxxxxxxxxxx"</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rate Limiting -->
+            <section id="rate-limiting" class="docs-section">
+                <h2>Rate Limiting</h2>
+                <p>Setiap API key memiliki limit <strong>100 requests per hari</strong>. Limit akan reset setiap tengah
+                    malam (00:00 WIB).</p>
+
+                <p>Response headers akan menunjukkan status limit Anda:</p>
+                <div class="code-block">
+                    <div class="code-content">
+                        <pre><code>X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1704153600</code></pre>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning" style="margin-top: var(--space-lg);">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <h4 class="alert-title">Rate Limit Exceeded</h4>
+                        <p class="alert-message">Jika limit terlampaui, API akan mengembalikan status
+                            <code>429 Too Many Requests</code>.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Errors -->
+            <section id="errors" class="docs-section">
+                <h2>Error Handling</h2>
+                <p>API menggunakan standard HTTP status codes:</p>
+
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>Status Code</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>200</code></td>
+                            <td>Success</td>
+                        </tr>
+                        <tr>
+                            <td><code>400</code></td>
+                            <td>Bad Request - Parameter tidak valid</td>
+                        </tr>
+                        <tr>
+                            <td><code>401</code></td>
+                            <td>Unauthorized - API key tidak valid atau tidak ada</td>
+                        </tr>
+                        <tr>
+                            <td><code>404</code></td>
+                            <td>Not Found - Resource tidak ditemukan</td>
+                        </tr>
+                        <tr>
+                            <td><code>429</code></td>
+                            <td>Too Many Requests - Rate limit terlampaui</td>
+                        </tr>
+                        <tr>
+                            <td><code>500</code></td>
+                            <td>Internal Server Error</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Error Response Format</h4>
+                <div class="code-block">
+                    <div class="code-content">
+                        <pre><code>{
+  "success": false,
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Invalid or missing API key"
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coffee Shops -->
+            <section id="coffeeshops" class="docs-section">
+                <h2>Coffee Shops</h2>
+
+                <!-- List Coffee Shops -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/coffeeshops</code>
+                    </div>
+                    <div class="endpoint-body">
+                        <p class="endpoint-desc">Mendapatkan daftar coffee shop dengan opsi filter dan pagination.</p>
+
+                        <h5>Query Parameters</h5>
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>city</code></td>
+                                    <td><span class="param-type">string</span></td>
+                                    <td>Filter by city name</td>
+                                </tr>
+                                <tr>
+                                    <td><code>category_id</code></td>
+                                    <td><span class="param-type">integer</span></td>
+                                    <td>Filter by category ID</td>
+                                </tr>
+                                <tr>
+                                    <td><code>facility_id</code></td>
+                                    <td><span class="param-type">integer</span></td>
+                                    <td>Filter by facility ID</td>
+                                </tr>
+                                <tr>
+                                    <td><code>search</code></td>
+                                    <td><span class="param-type">string</span></td>
+                                    <td>Search by name</td>
+                                </tr>
+                                <tr>
+                                    <td><code>page</code></td>
+                                    <td><span class="param-type">integer</span></td>
+                                    <td>Page number (default: 1)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>limit</code></td>
+                                    <td><span class="param-type">integer</span></td>
+                                    <td>Items per page (default: 10, max: 50)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h5>Response</h5>
+                        <div class="code-block">
+                            <div class="code-content">
+                                <pre><code>{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "name": "Kopi Kenangan",
+      "description": "Coffee shop modern dengan suasana nyaman",
+      "address": "Jl. Sudirman No. 123",
+      "city": "Jakarta",
+      "rating": 4.5,
+      "open_time": "07:00",
+      "close_time": "23:00",
+      "category": {
+        "id": 4,
+        "name": "Coffee Chain"
+      },
+      "facilities": [
+        { "id": 1, "name": "WiFi", "icon": "📶" },
+        { "id": 2, "name": "AC", "icon": "❄️" }
+      ]
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 156,
+    "total_pages": 16
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Get Coffee Shop -->
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/coffeeshops/:id</code>
+                    </div>
+                    <div class="endpoint-body">
+                        <p class="endpoint-desc">Mendapatkan detail coffee shop berdasarkan ID.</p>
+
+                        <h5>Path Parameters</h5>
+                        <table class="params-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>id</code> <span class="param-required">*</span></td>
+                                    <td><span class="param-type">integer</span></td>
+                                    <td>Coffee shop ID</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Categories -->
+            <section id="categories" class="docs-section">
+                <h2>Categories</h2>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/categories</code>
+                    </div>
+                    <div class="endpoint-body">
+                        <p class="endpoint-desc">Mendapatkan daftar semua kategori coffee shop.</p>
+
+                        <h5>Response</h5>
+                        <div class="code-block">
+                            <div class="code-content">
+                                <pre><code>{
+  "success": true,
+  "data": [
+    { "id": 1, "name": "Specialty Coffee", "description": "..." },
+    { "id": 2, "name": "Cafe & Eatery", "description": "..." },
+    { "id": 3, "name": "Roastery", "description": "..." },
+    { "id": 4, "name": "Coffee Chain", "description": "..." }
+  ]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Facilities -->
+            <section id="facilities" class="docs-section">
+                <h2>Facilities</h2>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/facilities</code>
+                    </div>
+                    <div class="endpoint-body">
+                        <p class="endpoint-desc">Mendapatkan daftar semua fasilitas yang tersedia.</p>
+
+                        <h5>Response</h5>
+                        <div class="code-block">
+                            <div class="code-content">
+                                <pre><code>{
+  "success": true,
+  "data": [
+    { "id": 1, "name": "WiFi", "icon": "📶" },
+    { "id": 2, "name": "AC", "icon": "❄️" },
+    { "id": 3, "name": "Parking", "icon": "🚗" },
+    { "id": 4, "name": "Outdoor Seating", "icon": "🌳" },
+    { "id": 5, "name": "Power Outlet", "icon": "🔌" },
+    { "id": 6, "name": "Non-Smoking Area", "icon": "🚭" },
+    { "id": 7, "name": "Live Music", "icon": "🎵" },
+    { "id": 8, "name": "Food Menu", "icon": "🍕" },
+    { "id": 9, "name": "Meeting Room", "icon": "🏢" },
+    { "id": 10, "name": "Pet Friendly", "icon": "🐕" }
+  ]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cities -->
+            <section id="cities" class="docs-section">
+                <h2>Cities</h2>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method method-get">GET</span>
+                        <code class="endpoint-path">/cities</code>
+                    </div>
+                    <div class="endpoint-body">
+                        <p class="endpoint-desc">Mendapatkan daftar kota yang memiliki coffee shop.</p>
+
+                        <h5>Response</h5>
+                        <div class="code-block">
+                            <div class="code-content">
+                                <pre><code>{
+  "success": true,
+  "data": [
+    { "name": "Jakarta", "count": 45 },
+    { "name": "Bandung", "count": 32 },
+    { "name": "Surabaya", "count": 28 },
+    { "name": "Yogyakarta", "count": 21 }
+  ]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Update navbar based on login status
+        (function () {
+            const navActions = document.getElementById('navActions');
+            const token = localStorage.getItem('coffeespot_token');
+            const userStr = localStorage.getItem('coffeespot_user');
+
+            if (token && userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    const dashboardUrl = user.role === 'admin' ? '../admin/dashboard.html' : '../user/dashboard.html';
+                    navActions.innerHTML = `
+                        <a href="${dashboardUrl}" class="btn btn-ghost">Dashboard</a>
+                        <button class="btn btn-primary" onclick="Auth.logout()">Logout</button>
+                    `;
+                } catch (e) {
+                    console.error('Failed to parse user:', e);
+                }
+            }
+        })();
+
+        // Highlight active nav link on scroll
+        const sections = document.querySelectorAll('.docs-section');
+        const navLinks = document.querySelectorAll('.docs-nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll for navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

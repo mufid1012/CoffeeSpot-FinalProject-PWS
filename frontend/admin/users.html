@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Admin CoffeeSpot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Admin Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">☕</span>
+                    <span>CoffeeSpot</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Dashboard</div>
+                    <a href="dashboard.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span>Overview</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Data Management</div>
+                    <a href="coffeeshops.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">☕</span>
+                        <span>Coffee Shops</span>
+                    </a>
+                    <a href="categories.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📁</span>
+                        <span>Categories</span>
+                    </a>
+                    <a href="facilities.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏷️</span>
+                        <span>Facilities</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Management</div>
+                    <a href="users.html" class="sidebar-link active">
+                        <span class="sidebar-link-icon">👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="logs.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span>API Logs</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-md" style="padding: var(--space-sm);">
+                    <div
+                        style="width: 36px; height: 36px; background: var(--color-danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        A</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: var(--font-size-sm); font-weight: 500;">Admin</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">Administrator</div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="Auth.logout()">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Users</h1>
+                <p class="page-subtitle">Kelola pengguna dan API keys mereka</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="card" style="margin-bottom: var(--space-lg);">
+                <div class="flex gap-md flex-wrap items-end">
+                    <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 200px;">
+                        <label class="form-label">Search</label>
+                        <input type="text" class="form-control" placeholder="Search by username or email..."
+                            id="searchInput">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
+                        <label class="form-label">Role</label>
+                        <select class="form-control form-select" id="roleFilter">
+                            <option value="">All Roles</option>
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary" onclick="applyFilters()">
+                        🔍 Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th>API Keys</th>
+                                <th>Total Requests</th>
+                                <th>Registered</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="pagination">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">User Details</h3>
+                <button class="modal-close" onclick="hideUserModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="flex items-center gap-lg" style="margin-bottom: var(--space-xl);">
+                    <div style="width: 64px; height: 64px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: var(--font-size-2xl); color: var(--color-text-inverse);"
+                        id="modalUserInitial">J</div>
+                    <div>
+                        <h3 style="margin-bottom: 4px;" id="modalUsername">john_doe</h3>
+                        <p style="margin: 0; color: var(--color-text-muted);" id="modalEmail">john@email.com</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-md" style="margin-bottom: var(--space-lg);">
+                    <div class="stat-card">
+                        <div class="stat-icon success">🔑</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="modalKeysCount">2</div>
+                            <div class="stat-label">Active Keys</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon info">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="modalRequestsCount">5,234</div>
+                            <div class="stat-label">Total Requests</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: var(--space-md);">API Keys</h4>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Requests</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalKeysTable">
+                            <tr>
+                                <td>Production</td>
+                                <td><span class="badge badge-success">active</span></td>
+                                <td>4,500</td>
+                            </tr>
+                            <tr>
+                                <td>Development</td>
+                                <td><span class="badge badge-success">active</span></td>
+                                <td>734</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="hideUserModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if (!Auth.requireAdmin()) { }
+
+        let users = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        const limit = 10;
+
+        async function loadUsers(page = 1) {
+            currentPage = page;
+            const search = document.getElementById('searchInput').value;
+            const role = document.getElementById('roleFilter').value;
+
+            try {
+                let url = `/admin/users?page=${page}&limit=${limit}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                if (role) url += `&role=${role}`;
+
+                const response = await API.get(url);
+                users = response.data;
+                totalPages = response.pagination?.total_pages || 1;
+                renderUsers();
+                renderPagination();
+            } catch (error) {
+                console.error('Failed to load users:', error);
+                document.getElementById('usersTable').innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--color-danger);">
+                            Failed to load data.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('usersTable');
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px;">No users found.</td></tr>`;
+                return;
+            }
+
+            const colors = ['var(--color-primary)', 'var(--color-success)', 'var(--color-warning)', 'var(--color-danger)', 'var(--color-info)'];
+
+            tbody.innerHTML = users.map((user, i) => `
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-md">
+                            <div style="width: 40px; height: 40px; background: ${colors[i % colors.length]}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white;">
+                                ${user.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div style="font-weight: 500;">${user.username}</div>
+                                <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-${user.role === 'admin' ? 'danger' : 'info'}">${user.role}</span></td>
+                    <td>
+                        <span class="badge badge-success">${user.api_key_count || 0} keys</span>
+                    </td>
+                    <td>${(user.total_requests || 0).toLocaleString()}</td>
+                    <td>${UI.formatDate(user.created_at)}</td>
+                    <td>
+                        <button class="btn btn-ghost btn-sm" onclick="viewUser(${user.id})">View Details</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPagination() {
+            const container = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            html += `<button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="loadUsers(${currentPage - 1})">←</button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="loadUsers(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<button class="pagination-btn" disabled>...</button>`;
+                }
+            }
+
+            html += `<button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="loadUsers(${currentPage + 1})">→</button>`;
+            container.innerHTML = html;
+        }
+
+        function applyFilters() {
+            loadUsers(1);
+        }
+
+        async function viewUser(id) {
+            try {
+                const response = await API.get(`/admin/users/${id}`);
+                const user = response.data;
+
+                document.getElementById('modalUserInitial').textContent = user.username.charAt(0).toUpperCase();
+                document.getElementById('modalUsername').textContent = user.username;
+                document.getElementById('modalEmail').textContent = user.email;
+                document.getElementById('modalKeysCount').textContent = user.api_keys?.length || 0;
+                document.getElementById('modalRequestsCount').textContent = (user.total_requests || 0).toLocaleString();
+
+                const keysTable = document.getElementById('modalKeysTable');
+                if (user.api_keys && user.api_keys.length > 0) {
+                    keysTable.innerHTML = user.api_keys.map(key => `
+                        <tr>
+                            <td>${key.name}</td>
+                            <td><span class="badge badge-${key.status === 'active' ? 'success' : 'danger'}">${key.status}</span></td>
+                            <td>${(key.total_requests || 0).toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    keysTable.innerHTML = `<tr><td colspan="3" style="text-align: center;">No API keys</td></tr>`;
+                }
+
+                document.getElementById('userModal').classList.add('active');
+            } catch (error) {
+                alert('Failed to load user details: ' + (error.message || 'Unknown error'));
+            }
+        }
+
+        function hideUserModal() {
+            document.getElementById('userModal').classList.remove('active');
+        }
+
+        document.getElementById('userModal').addEventListener('click', (e) => {
+            if (e.target.id === 'userModal') hideUserModal();
+        });
+
+        loadUsers();
+    </script>
+</body>
+
+</html>

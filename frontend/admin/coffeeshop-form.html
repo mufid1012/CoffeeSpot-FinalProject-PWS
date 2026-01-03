@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add/Edit Coffee Shop - Admin CoffeeSpot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .facility-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .facility-checkbox:hover {
+            background: var(--color-bg-card-hover);
+        }
+
+        .facility-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--color-primary);
+        }
+
+        .time-inputs {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .time-inputs>div {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Admin Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">☕</span>
+                    <span>CoffeeSpot</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Dashboard</div>
+                    <a href="dashboard.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span>Overview</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Data Management</div>
+                    <a href="coffeeshops.html" class="sidebar-link active">
+                        <span class="sidebar-link-icon">☕</span>
+                        <span>Coffee Shops</span>
+                    </a>
+                    <a href="categories.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📁</span>
+                        <span>Categories</span>
+                    </a>
+                    <a href="facilities.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏷️</span>
+                        <span>Facilities</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Management</div>
+                    <a href="users.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="logs.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span>API Logs</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-md" style="padding: var(--space-sm);">
+                    <div
+                        style="width: 36px; height: 36px; background: var(--color-danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        A</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: var(--font-size-sm); font-weight: 500;">Admin</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">Administrator</div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="Auth.logout()">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <div class="flex items-center gap-md">
+                    <a href="coffeeshops.html" class="btn btn-ghost btn-icon">←</a>
+                    <div>
+                        <h1 class="page-title" id="pageTitle">Add Coffee Shop</h1>
+                        <p class="page-subtitle">Tambah data coffee shop baru</p>
+                    </div>
+                </div>
+            </div>
+
+            <form id="coffeeShopForm">
+                <div class="grid grid-cols-2 gap-lg">
+                    <!-- Left Column -->
+                    <div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Basic Information</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label" for="name">Name *</label>
+                                    <input type="text" id="name" class="form-control" placeholder="Coffee shop name"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="description">Description</label>
+                                    <textarea id="description" class="form-control"
+                                        placeholder="Describe the coffee shop..." rows="4"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="category">Category *</label>
+                                    <select id="category" class="form-control form-select" required>
+                                        <option value="">Select category</option>
+                                        <option value="1">Specialty Coffee</option>
+                                        <option value="2">Cafe & Eatery</option>
+                                        <option value="3">Roastery</option>
+                                        <option value="4">Coffee Chain</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="rating">Rating (0-5)</label>
+                                    <input type="number" id="rating" class="form-control" min="0" max="5" step="0.1"
+                                        placeholder="4.5">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="imageUrl">Image URL</label>
+                                    <input type="url" id="imageUrl" class="form-control" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-top: var(--space-lg);">
+                            <div class="card-header">
+                                <h2 class="card-title">Operating Hours</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="time-inputs">
+                                    <div class="form-group">
+                                        <label class="form-label" for="openTime">Open Time</label>
+                                        <input type="time" id="openTime" class="form-control" value="08:00">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="closeTime">Close Time</label>
+                                        <input type="time" id="closeTime" class="form-control" value="22:00">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Location</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label" for="address">Address *</label>
+                                    <textarea id="address" class="form-control" placeholder="Full address" rows="2"
+                                        required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="city">City *</label>
+                                    <select id="city" class="form-control form-select" required>
+                                        <option value="">Select city</option>
+                                        <option value="Jakarta">Jakarta</option>
+                                        <option value="Bandung">Bandung</option>
+                                        <option value="Surabaya">Surabaya</option>
+                                        <option value="Yogyakarta">Yogyakarta</option>
+                                        <option value="Bali">Bali</option>
+                                        <option value="Semarang">Semarang</option>
+                                        <option value="Malang">Malang</option>
+                                        <option value="Medan">Medan</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-2 gap-md">
+                                    <div class="form-group">
+                                        <label class="form-label" for="latitude">Latitude</label>
+                                        <input type="number" id="latitude" class="form-control" step="any"
+                                            placeholder="-6.2088">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="longitude">Longitude</label>
+                                        <input type="number" id="longitude" class="form-control" step="any"
+                                            placeholder="106.8456">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-top: var(--space-lg);">
+                            <div class="card-header">
+                                <h2 class="card-title">Facilities</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="grid grid-cols-2 gap-sm">
+                                    <label class="facility-checkbox">
+                                        <input type="checkbox" name="facilities" value="1">
+                                        <span>📶 WiFi</span>
+                                    </label>
+                                    <label class="facility-checkbox">
+                                        <input type="checkbox" name="facilities" value="2">
+                                        <span>❄️ AC</span>
+                                    </label>
+                                    <label class="facility-checkbox">
+                                        <input type="checkbox" name="facilities" value="3">
+                                        <span>🚗 Parking</span>
+                                    </label>
+                                    <label class="facility-checkbox">
+                                        <input type="checkbox" name="facilities" value="4">
+                                        <span>🌳 Outdoor</span>
+                                    </label>
+                                    <label class="facility-checkbox">
+                                        <input type="checkbox" name="facilities" value="5">
+                                        <span>🔌 Power Outlet</span>
+                                    </label>
+                                    <label class="facility-checkbox">
+                                        <input type="checkbox" name="facilities" value="6">
+                                        <span>🚭 Non-Smoking</span>
+                                    </label>
+                                    <label class="facility-checkbox">
+                                        <input type="checkbox" name="facilities" value="7">
+                                        <span>🎵 Live Music</span>
+                                    </label>
+                                    <label class="facility-checkbox">
+                                        <input type="checkbox" name="facilities" value="8">
+                                        <span>🍕 Food Menu</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end gap-md" style="margin-top: var(--space-xl);">
+                    <a href="coffeeshops.html" class="btn btn-ghost">Cancel</a>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <span>💾</span>
+                        Save Coffee Shop
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if (!Auth.requireAdmin()) { }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('id');
+
+        if (editId) {
+            document.getElementById('pageTitle').textContent = 'Edit Coffee Shop';
+            loadCoffeeShop(editId);
+        }
+
+        async function loadCoffeeShop(id) {
+            // Simulated data for demo
+            const data = {
+                id: 1,
+                name: 'Kopi Kenangan',
+                description: 'Coffee shop modern dengan suasana nyaman',
+                category_id: '4',
+                rating: 4.5,
+                address: 'Jl. Sudirman No. 123',
+                city: 'Jakarta',
+                latitude: -6.2088,
+                longitude: 106.8456,
+                open_time: '07:00',
+                close_time: '23:00',
+                facilities: [1, 2, 3, 5]
+            };
+
+            document.getElementById('name').value = data.name;
+            document.getElementById('description').value = data.description;
+            document.getElementById('category').value = data.category_id;
+            document.getElementById('rating').value = data.rating;
+            document.getElementById('address').value = data.address;
+            document.getElementById('city').value = data.city;
+            document.getElementById('latitude').value = data.latitude;
+            document.getElementById('longitude').value = data.longitude;
+            document.getElementById('openTime').value = data.open_time;
+            document.getElementById('closeTime').value = data.close_time;
+
+            data.facilities.forEach(f => {
+                const checkbox = document.querySelector(`input[name="facilities"][value="${f}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+
+        document.getElementById('coffeeShopForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('submitBtn');
+            UI.showLoading(btn);
+
+            const facilities = [...document.querySelectorAll('input[name="facilities"]:checked')].map(c => parseInt(c.value));
+
+            const data = {
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                category_id: parseInt(document.getElementById('category').value),
+                rating: parseFloat(document.getElementById('rating').value) || 0,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                latitude: parseFloat(document.getElementById('latitude').value) || null,
+                longitude: parseFloat(document.getElementById('longitude').value) || null,
+                open_time: document.getElementById('openTime').value,
+                close_time: document.getElementById('closeTime').value,
+                facilities: facilities
+            };
+
+            try {
+                // API call would go here
+                console.log('Saving:', data);
+
+                UI.showToast(editId ? 'Coffee shop updated!' : 'Coffee shop created!');
+                setTimeout(() => {
+                    window.location.href = 'coffeeshops.html';
+                }, 1000);
+            } catch (error) {
+                alert('Failed to save: ' + error.message);
+                UI.hideLoading(btn);
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Logs - Admin CoffeeSpot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .method-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .method-get {
+            background: var(--color-success-bg);
+            color: var(--color-success);
+        }
+
+        .method-post {
+            background: var(--color-info-bg);
+            color: var(--color-info);
+        }
+
+        .method-put {
+            background: var(--color-warning-bg);
+            color: var(--color-warning);
+        }
+
+        .method-delete {
+            background: var(--color-danger-bg);
+            color: var(--color-danger);
+        }
+
+        .status-2xx {
+            color: var(--color-success);
+        }
+
+        .status-4xx {
+            color: var(--color-warning);
+        }
+
+        .status-5xx {
+            color: var(--color-danger);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Admin Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">☕</span>
+                    <span>CoffeeSpot</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Dashboard</div>
+                    <a href="dashboard.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span>Overview</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Data Management</div>
+                    <a href="coffeeshops.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">☕</span>
+                        <span>Coffee Shops</span>
+                    </a>
+                    <a href="categories.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📁</span>
+                        <span>Categories</span>
+                    </a>
+                    <a href="facilities.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏷️</span>
+                        <span>Facilities</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Management</div>
+                    <a href="users.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="logs.html" class="sidebar-link active">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span>API Logs</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-md" style="padding: var(--space-sm);">
+                    <div
+                        style="width: 36px; height: 36px; background: var(--color-danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        A</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: var(--font-size-sm); font-weight: 500;">Admin</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">Administrator</div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="Auth.logout()">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">API Logs</h1>
+                <p class="page-subtitle">Monitor aktivitas API</p>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-4 gap-lg" style="margin-bottom: var(--space-xl);">
+                <div class="stat-card">
+                    <div class="stat-icon primary">📈</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="todayRequests">-</div>
+                        <div class="stat-label">Today's Requests</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon success">✓</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="successRate">-</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon warning">⏱️</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="avgResponse">-</div>
+                        <div class="stat-label">Avg Response</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon danger">⚠️</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="errorsToday">-</div>
+                        <div class="stat-label">Errors Today</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="card" style="margin-bottom: var(--space-lg);">
+                <div class="flex gap-md flex-wrap items-end">
+                    <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" id="dateFilter">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; min-width: 180px;">
+                        <label class="form-label">Endpoint</label>
+                        <select class="form-control form-select" id="endpointFilter">
+                            <option value="">All Endpoints</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; min-width: 120px;">
+                        <label class="form-label">Status</label>
+                        <select class="form-control form-select" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="2xx">2xx Success</option>
+                            <option value="4xx">4xx Client Error</option>
+                            <option value="5xx">5xx Server Error</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 150px;">
+                        <label class="form-label">API Key</label>
+                        <input type="text" class="form-control" placeholder="cs_live_..." id="apiKeyFilter">
+                    </div>
+                    <button class="btn btn-secondary" onclick="applyFilters()">
+                        🔍 Filter
+                    </button>
+                    <button class="btn btn-ghost" onclick="clearFilters()">
+                        ✕ Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Logs Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Method</th>
+                                <th>Endpoint</th>
+                                <th>Status</th>
+                                <th>Response Time</th>
+                                <th>API Key</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 40px;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination" id="pagination">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if (!Auth.requireAdmin()) { }
+
+        let logs = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        const limit = 20;
+
+        // Set default date to today
+        document.getElementById('dateFilter').value = new Date().toISOString().split('T')[0];
+
+        async function loadLogs(page = 1) {
+            currentPage = page;
+            const date = document.getElementById('dateFilter').value;
+            const endpoint = document.getElementById('endpointFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const apiKey = document.getElementById('apiKeyFilter').value;
+
+            try {
+                let url = `/admin/logs?page=${page}&limit=${limit}`;
+                if (date) url += `&date=${date}`;
+                if (endpoint) url += `&endpoint=${encodeURIComponent(endpoint)}`;
+                if (status) url += `&status=${status}`;
+                if (apiKey) url += `&api_key=${encodeURIComponent(apiKey)}`;
+
+                const response = await API.get(url);
+                logs = response.data;
+
+                // Update stats
+                if (response.stats) {
+                    document.getElementById('todayRequests').textContent = response.stats.today_requests.toLocaleString();
+                    document.getElementById('successRate').textContent = response.stats.success_rate + '%';
+                    document.getElementById('avgResponse').textContent = response.stats.avg_response_time + 'ms';
+                    document.getElementById('errorsToday').textContent = response.stats.errors_today;
+                }
+
+                // Calculate total pages (estimate based on today's requests)
+                totalPages = Math.max(1, Math.ceil((response.stats?.today_requests || logs.length) / limit));
+
+                renderLogs();
+                renderPagination();
+            } catch (error) {
+                console.error('Failed to load logs:', error);
+                document.getElementById('logsTable').innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--color-danger);">
+                            Failed to load data. Please try again.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderLogs() {
+            const tbody = document.getElementById('logsTable');
+
+            if (logs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px;">
+                            No logs found.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = logs.map(log => {
+                const time = new Date(log.created_at).toLocaleTimeString('id-ID');
+                const methodClass = `method-${log.method.toLowerCase()}`;
+                const statusClass = log.status_code >= 500 ? 'status-5xx' :
+                    log.status_code >= 400 ? 'status-4xx' : 'status-2xx';
+                const maskedKey = log.api_key ? log.api_key.substring(0, 12) + '...' : '-';
+
+                return `
+                    <tr>
+                        <td style="white-space: nowrap;">${time}</td>
+                        <td><span class="method-badge ${methodClass}">${log.method}</span></td>
+                        <td><code>${log.endpoint}</code></td>
+                        <td><span class="${statusClass}">${log.status_code}</span></td>
+                        <td>${log.response_time}ms</td>
+                        <td><code style="font-size: var(--font-size-xs);">${maskedKey}</code></td>
+                        <td>${log.ip_address || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderPagination() {
+            const container = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            html += `<button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="loadLogs(${currentPage - 1})">←</button>`;
+
+            for (let i = 1; i <= Math.min(totalPages, 10); i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="loadLogs(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<button class="pagination-btn" disabled>...</button>`;
+                }
+            }
+
+            html += `<button class="pagination-btn" ${currentPage >= totalPages ? 'disabled' : ''} onclick="loadLogs(${currentPage + 1})">→</button>`;
+            container.innerHTML = html;
+        }
+
+        function applyFilters() {
+            loadLogs(1);
+        }
+
+        function clearFilters() {
+            document.getElementById('dateFilter').value = new Date().toISOString().split('T')[0];
+            document.getElementById('endpointFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('apiKeyFilter').value = '';
+            loadLogs(1);
+        }
+
+        async function loadEndpoints() {
+            try {
+                const response = await API.get('/admin/logs/endpoints');
+                const select = document.getElementById('endpointFilter');
+                select.innerHTML = '<option value="">All Endpoints</option>' +
+                    response.data.map(e => `<option value="${e.endpoint}">${e.endpoint} (${e.count})</option>`).join('');
+            } catch (error) {
+                console.error('Failed to load endpoints:', error);
+            }
+        }
+
+        // Initial load
+        loadEndpoints();
+        loadLogs();
+    </script>
+</body>
+
+</html>

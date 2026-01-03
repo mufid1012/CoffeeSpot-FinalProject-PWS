@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - Admin CoffeeSpot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Admin Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">☕</span>
+                    <span>CoffeeSpot</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Dashboard</div>
+                    <a href="dashboard.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span>Overview</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Data Management</div>
+                    <a href="coffeeshops.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">☕</span>
+                        <span>Coffee Shops</span>
+                    </a>
+                    <a href="categories.html" class="sidebar-link active">
+                        <span class="sidebar-link-icon">📁</span>
+                        <span>Categories</span>
+                    </a>
+                    <a href="facilities.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏷️</span>
+                        <span>Facilities</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Management</div>
+                    <a href="users.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="logs.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span>API Logs</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-md" style="padding: var(--space-sm);">
+                    <div
+                        style="width: 36px; height: 36px; background: var(--color-danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        A</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: var(--font-size-sm); font-weight: 500;">Admin</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">Administrator</div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="Auth.logout()">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header flex justify-between items-center">
+                <div>
+                    <h1 class="page-title">Categories</h1>
+                    <p class="page-subtitle">Kelola kategori coffee shop</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddModal()">
+                    <span>➕</span>
+                    Add Category
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Coffee Shops</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTable">
+                            <tr>
+                                <td>1</td>
+                                <td><strong>Specialty Coffee</strong></td>
+                                <td style="color: var(--color-text-muted);">Coffee shop yang fokus pada kopi specialty
+                                    dan single origin</td>
+                                <td><span class="badge badge-info">45</span></td>
+                                <td>
+                                    <div class="flex gap-xs">
+                                        <button class="btn btn-ghost btn-sm"
+                                            onclick="editCategory(1, 'Specialty Coffee', 'Coffee shop yang fokus pada kopi specialty dan single origin')">✏️</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="deleteCategory(1)">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><strong>Cafe & Eatery</strong></td>
+                                <td style="color: var(--color-text-muted);">Cafe dengan menu makanan lengkap</td>
+                                <td><span class="badge badge-info">62</span></td>
+                                <td>
+                                    <div class="flex gap-xs">
+                                        <button class="btn btn-ghost btn-sm"
+                                            onclick="editCategory(2, 'Cafe & Eatery', 'Cafe dengan menu makanan lengkap')">✏️</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="deleteCategory(2)">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>Roastery</strong></td>
+                                <td style="color: var(--color-text-muted);">Tempat roasting dan brewing kopi</td>
+                                <td><span class="badge badge-info">23</span></td>
+                                <td>
+                                    <div class="flex gap-xs">
+                                        <button class="btn btn-ghost btn-sm"
+                                            onclick="editCategory(3, 'Roastery', 'Tempat roasting dan brewing kopi')">✏️</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="deleteCategory(3)">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><strong>Coffee Chain</strong></td>
+                                <td style="color: var(--color-text-muted);">Jaringan coffee shop dengan banyak cabang
+                                </td>
+                                <td><span class="badge badge-info">26</span></td>
+                                <td>
+                                    <div class="flex gap-xs">
+                                        <button class="btn btn-ghost btn-sm"
+                                            onclick="editCategory(4, 'Coffee Chain', 'Jaringan coffee shop dengan banyak cabang')">✏️</button>
+                                        <button class="btn btn-ghost btn-sm" onclick="deleteCategory(4)">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add Category</h3>
+                <button class="modal-close" onclick="hideModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId">
+                    <div class="form-group">
+                        <label class="form-label" for="categoryName">Name *</label>
+                        <input type="text" id="categoryName" class="form-control" placeholder="Category name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="categoryDesc">Description</label>
+                        <textarea id="categoryDesc" class="form-control" placeholder="Category description"
+                            rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="hideModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveCategory()" id="saveBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Delete Category</h3>
+                <button class="modal-close" onclick="hideDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus kategori ini?</p>
+                <p class="text-muted" style="font-size: var(--font-size-sm);">Coffee shop dengan kategori ini akan
+                    menjadi uncategorized.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="hideDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if (!Auth.requireAdmin()) { }
+
+        let categories = [];
+        let deleteId = null;
+
+        // Load categories from API
+        async function loadCategories() {
+            try {
+                const response = await API.get('/admin/categories');
+                categories = response.data;
+                renderCategories();
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        }
+
+        function renderCategories() {
+            const tbody = document.getElementById('categoriesTable');
+            if (categories.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 40px;">No categories found.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = categories.map(cat => `
+                <tr>
+                    <td>${cat.id}</td>
+                    <td><strong>${cat.name}</strong></td>
+                    <td style="color: var(--color-text-muted);">${cat.description || '-'}</td>
+                    <td><span class="badge badge-info">${cat.coffeeshop_count || 0}</span></td>
+                    <td>
+                        <div class="flex gap-xs">
+                            <button class="btn btn-ghost btn-sm" onclick="editCategory(${cat.id}, '${cat.name.replace(/'/g, "\\'")}', '${(cat.description || '').replace(/'/g, "\\'")}')">✏️</button>
+                            <button class="btn btn-ghost btn-sm" onclick="deleteCategory(${cat.id})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function showAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add Category';
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryDesc').value = '';
+            document.getElementById('categoryModal').classList.add('active');
+            document.getElementById('categoryName').focus();
+        }
+
+        function editCategory(id, name, desc) {
+            document.getElementById('modalTitle').textContent = 'Edit Category';
+            document.getElementById('categoryId').value = id;
+            document.getElementById('categoryName').value = name;
+            document.getElementById('categoryDesc').value = desc;
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        function hideModal() {
+            document.getElementById('categoryModal').classList.remove('active');
+        }
+
+        async function saveCategory() {
+            const id = document.getElementById('categoryId').value;
+            const name = document.getElementById('categoryName').value.trim();
+            const description = document.getElementById('categoryDesc').value.trim();
+
+            if (!name) return;
+
+            const btn = document.getElementById('saveBtn');
+            UI.showLoading(btn);
+
+            try {
+                if (id) {
+                    await API.put(`/admin/categories/${id}`, { name, description });
+                    UI.showToast('Category updated!');
+                } else {
+                    await API.post('/admin/categories', { name, description });
+                    UI.showToast('Category created!');
+                }
+                hideModal();
+                loadCategories();
+            } catch (error) {
+                alert('Failed to save: ' + (error.message || 'Unknown error'));
+            } finally {
+                UI.hideLoading(btn);
+            }
+        }
+
+        function deleteCategory(id) {
+            deleteId = id;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function hideDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteId = null;
+        }
+
+        async function confirmDelete() {
+            if (!deleteId) return;
+            try {
+                await API.delete(`/admin/categories/${deleteId}`);
+                UI.showToast('Category deleted!');
+                hideDeleteModal();
+                loadCategories();
+            } catch (error) {
+                alert('Failed to delete: ' + (error.message || 'Unknown error'));
+            }
+        }
+
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            });
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            }
+        });
+
+        // Initial load
+        loadCategories();
+    </script>
+</body>
+
+</html>

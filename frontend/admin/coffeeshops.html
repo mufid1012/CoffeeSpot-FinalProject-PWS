@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Shops - Admin CoffeeSpot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Admin Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">☕</span>
+                    <span>CoffeeSpot</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Dashboard</div>
+                    <a href="dashboard.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span>Overview</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Data Management</div>
+                    <a href="coffeeshops.html" class="sidebar-link active">
+                        <span class="sidebar-link-icon">☕</span>
+                        <span>Coffee Shops</span>
+                    </a>
+                    <a href="categories.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📁</span>
+                        <span>Categories</span>
+                    </a>
+                    <a href="facilities.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">🏷️</span>
+                        <span>Facilities</span>
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Management</div>
+                    <a href="users.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="logs.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📋</span>
+                        <span>API Logs</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-md" style="padding: var(--space-sm);">
+                    <div
+                        style="width: 36px; height: 36px; background: var(--color-danger); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        A</div>
+                    <div style="flex: 1;">
+                        <div style="font-size: var(--font-size-sm); font-weight: 500;">Admin</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">Administrator</div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="Auth.logout()" title="Logout">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header flex justify-between items-center">
+                <div>
+                    <h1 class="page-title">Coffee Shops</h1>
+                    <p class="page-subtitle">Kelola data coffee shop</p>
+                </div>
+                <a href="coffeeshop-form.html" class="btn btn-primary">
+                    <span>➕</span>
+                    Add Coffee Shop
+                </a>
+            </div>
+
+            <!-- Filters -->
+            <div class="card" style="margin-bottom: var(--space-lg);">
+                <div class="flex gap-md flex-wrap items-end">
+                    <div class="form-group" style="margin-bottom: 0; flex: 1; min-width: 200px;">
+                        <label class="form-label">Search</label>
+                        <input type="text" class="form-control" placeholder="Search by name..." id="searchInput">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
+                        <label class="form-label">City</label>
+                        <select class="form-control form-select" id="cityFilter">
+                            <option value="">All Cities</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
+                        <label class="form-label">Category</label>
+                        <select class="form-control form-select" id="categoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary" onclick="applyFilters()">
+                        🔍 Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Coffee Shops Table -->
+            <div class="card">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>City</th>
+                                <th>Category</th>
+                                <th>Rating</th>
+                                <th>Facilities</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coffeeShopsTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px;">
+                                    Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Delete Coffee Shop</h3>
+                <button class="modal-close" onclick="hideDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus coffee shop ini?</p>
+                <p class="text-muted" style="font-size: var(--font-size-sm);">Aksi ini tidak dapat dibatalkan.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="hideDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if (!Auth.requireAdmin()) { }
+
+        let deleteId = null;
+        let coffeeShops = [];
+        let currentPage = 1;
+        let totalPages = 1;
+        const limit = 10;
+
+        // Load filter options
+        async function loadFilters() {
+            try {
+                // Load categories
+                const catResponse = await API.get('/admin/categories');
+                const categoryFilter = document.getElementById('categoryFilter');
+                categoryFilter.innerHTML = '<option value="">All Categories</option>' +
+                    catResponse.data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+                // Load cities from API
+                const cityResponse = await API.get('/admin/cities');
+                const cityFilter = document.getElementById('cityFilter');
+                if (cityResponse.data) {
+                    cityFilter.innerHTML = '<option value="">All Cities</option>' +
+                        cityResponse.data.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load filters:', error);
+            }
+        }
+
+        // Load coffee shops from API
+        async function loadCoffeeShops(page = 1) {
+            currentPage = page;
+            const search = document.getElementById('searchInput').value;
+            const city = document.getElementById('cityFilter').value;
+            const category = document.getElementById('categoryFilter').value;
+
+            try {
+                let url = `/admin/coffeeshops?page=${page}&limit=${limit}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                if (city) url += `&city=${encodeURIComponent(city)}`;
+                if (category) url += `&category_id=${category}`;
+
+                const response = await API.get(url);
+                coffeeShops = response.data;
+                totalPages = response.pagination?.total_pages || 1;
+                renderCoffeeShops();
+                renderPagination();
+            } catch (error) {
+                console.error('Failed to load coffee shops:', error);
+                document.getElementById('coffeeShopsTable').innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--color-danger);">
+                            Failed to load data. Please try again.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function renderCoffeeShops() {
+            const tbody = document.getElementById('coffeeShopsTable');
+
+            if (coffeeShops.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            No coffee shops found.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = coffeeShops.map(shop => `
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-md">
+                            <div style="width: 48px; height: 48px; background: var(--color-bg-primary); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center;">☕</div>
+                            <div>
+                                <div style="font-weight: 500;">${shop.name}</div>
+                                <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">${shop.address || '-'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${shop.city}</td>
+                    <td><span class="badge badge-info">${shop.category_name || '-'}</span></td>
+                    <td>
+                        <div class="flex items-center gap-xs">
+                            <span style="color: #fbbf24;">★</span>
+                            <span>${shop.rating || 0}</span>
+                        </div>
+                    </td>
+                    <td>-</td>
+                    <td>
+                        <div class="flex gap-xs">
+                            <a href="coffeeshop-form.html?id=${shop.id}" class="btn btn-ghost btn-sm">✏️</a>
+                            <button class="btn btn-ghost btn-sm" onclick="deleteShop(${shop.id}, '${shop.name.replace(/'/g, "\\'")}')">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderPagination() {
+            const container = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            html += `<button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="loadCoffeeShops(${currentPage - 1})">←</button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="loadCoffeeShops(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<button class="pagination-btn" disabled>...</button>`;
+                }
+            }
+
+            html += `<button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="loadCoffeeShops(${currentPage + 1})">→</button>`;
+            container.innerHTML = html;
+        }
+
+        function applyFilters() {
+            loadCoffeeShops(1);
+        }
+
+        function deleteShop(id, name) {
+            deleteId = id;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function hideDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteId = null;
+        }
+
+        async function confirmDelete() {
+            if (!deleteId) return;
+
+            try {
+                await API.delete(`/admin/coffeeshops/${deleteId}`);
+                UI.showToast('Coffee shop deleted successfully');
+                hideDeleteModal();
+                loadCoffeeShops(currentPage);
+            } catch (error) {
+                alert('Failed to delete: ' + (error.message || 'Unknown error'));
+            }
+        }
+
+        document.getElementById('deleteModal').addEventListener('click', (e) => {
+            if (e.target.id === 'deleteModal') hideDeleteModal();
+        });
+
+        // Initial load
+        loadFilters();
+        loadCoffeeShops();
+    </script>
+</body>
+
+</html>

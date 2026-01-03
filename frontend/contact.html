@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hubungi Kami - CoffeeSpot API</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span class="logo-icon">☕</span>
+                <span>CoffeeSpot</span>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html#features" class="nav-link">Fitur</a>
+                <a href="index.html#quickstart" class="nav-link">Mulai Cepat</a>
+                <a href="docs/index.html" class="nav-link">Dokumentasi</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="auth/login.html" class="btn btn-ghost">Masuk</a>
+                <a href="auth/register.html" class="btn btn-primary">Dapatkan API Key</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main style="padding-top: calc(var(--header-height) + 40px); padding-bottom: 60px;">
+        <div class="container">
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div style="text-align: center; margin-bottom: var(--space-2xl);">
+                    <h1 style="margin-bottom: var(--space-md);">Hubungi Kami</h1>
+                    <p style="color: var(--color-text-muted); max-width: 500px; margin: 0 auto;">
+                        Punya pertanyaan atau butuh bantuan? Kami siap membantu Anda.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-3" style="gap: var(--space-lg); margin-bottom: var(--space-2xl);">
+                    <!-- Email -->
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--space-md);">📧</div>
+                        <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-sm);">Email</h3>
+                        <p
+                            style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-md);">
+                            Untuk pertanyaan umum dan dukungan
+                        </p>
+                        <a href="mailto:support@coffeespot.id" style="color: var(--color-primary); font-weight: 500;">
+                            support@coffeespot.id
+                        </a>
+                    </div>
+
+                    <!-- GitHub -->
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--space-md);">💻</div>
+                        <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-sm);">GitHub</h3>
+                        <p
+                            style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-md);">
+                            Laporkan bug atau request fitur
+                        </p>
+                        <a href="https://github.com/coffeespot" target="_blank"
+                            style="color: var(--color-primary); font-weight: 500;">
+                            github.com/coffeespot
+                        </a>
+                    </div>
+
+                    <!-- Response Time -->
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 2.5rem; margin-bottom: var(--space-md);">⏱️</div>
+                        <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-sm);">Waktu Respons</h3>
+                        <p
+                            style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin-bottom: var(--space-md);">
+                            Kami biasanya merespons dalam
+                        </p>
+                        <span style="color: var(--color-primary); font-weight: 500;">24-48 jam</span>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="card">
+                    <h2 style="font-size: var(--font-size-xl); margin-bottom: var(--space-lg);">Kirim Pesan</h2>
+                    <form id="contactForm">
+                        <div class="grid grid-cols-2" style="gap: var(--space-lg);">
+                            <div class="form-group">
+                                <label class="form-label">Nama</label>
+                                <input type="text" class="form-control" placeholder="Nama Anda" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" placeholder="email@anda.com" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subjek</label>
+                            <select class="form-control form-select" required>
+                                <option value="">Pilih topik</option>
+                                <option value="general">Pertanyaan Umum</option>
+                                <option value="support">Dukungan Teknis</option>
+                                <option value="billing">Pertanyaan Billing</option>
+                                <option value="partnership">Kerjasama</option>
+                                <option value="bug">Laporan Bug</option>
+                                <option value="feature">Permintaan Fitur</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pesan</label>
+                            <textarea class="form-control" rows="5" placeholder="Bagaimana kami dapat membantu Anda?"
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                            Kirim Pesan
+                        </button>
+                    </form>
+                </div>
+
+                <!-- FAQ Section -->
+                <div style="margin-top: var(--space-2xl);">
+                    <h2 style="font-size: var(--font-size-xl); margin-bottom: var(--space-lg); text-align: center;">
+                        Pertanyaan yang Sering Diajukan</h2>
+                    <div class="grid grid-cols-2" style="gap: var(--space-lg);">
+                        <div class="card">
+                            <h4 style="margin-bottom: var(--space-sm);">Bagaimana cara mendapatkan API key?</h4>
+                            <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin: 0;">
+                                Cukup daftar akun gratis dan masuk ke dashboard Anda untuk membuat API key.
+                            </p>
+                        </div>
+                        <div class="card">
+                            <h4 style="margin-bottom: var(--space-sm);">Berapa batas rate limit?</h4>
+                            <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin: 0;">
+                                Paket gratis mencakup 100 request per hari. Hubungi kami untuk limit lebih tinggi.
+                            </p>
+                        </div>
+                        <div class="card">
+                            <h4 style="margin-bottom: var(--space-sm);">Apakah API ini gratis?</h4>
+                            <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin: 0;">
+                                Ya! Kami menawarkan paket gratis untuk developer. Paket premium tersedia untuk
+                                penggunaan lebih tinggi.
+                            </p>
+                        </div>
+                        <div class="card">
+                            <h4 style="margin-bottom: var(--space-sm);">Di mana saya bisa menemukan dokumentasi?</h4>
+                            <p style="color: var(--color-text-muted); font-size: var(--font-size-sm); margin: 0;">
+                                Kunjungi halaman <a href="docs/index.html">Dokumentasi</a> kami untuk referensi API
+                                lengkap.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-copyright">
+                    <span class="logo" style="font-size: 1rem; margin-bottom: 0.5rem;">
+                        <span>☕</span>
+                        <span>CoffeeSpot API</span>
+                    </span>
+                    <p style="margin: 0;">© 2026 CoffeeSpot. Hak cipta dilindungi.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="docs/index.html" class="footer-link">Dokumentasi</a>
+                    <a href="terms.html" class="footer-link">Syarat & Ketentuan</a>
+                    <a href="privacy.html" class="footer-link">Kebijakan Privasi</a>
+                    <a href="contact.html" class="footer-link">Kontak</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Terima kasih atas pesan Anda! Kami akan menghubungi Anda dalam 24-48 jam.');
+            this.reset();
+        });
+    </script>
+</body>
+
+</html>
