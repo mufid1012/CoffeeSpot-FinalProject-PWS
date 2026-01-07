@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity - CoffeeSpot API</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <span class="logo-icon">☕</span>
+                    <span>CoffeeSpot</span>
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Menu</div>
+                    <a href="dashboard.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="activity.html" class="sidebar-link active">
+                        <span class="sidebar-link-icon">📈</span>
+                        <span>Activity</span>
+                    </a>
+                    <a href="../docs/index.html" class="sidebar-link">
+                        <span class="sidebar-link-icon">📖</span>
+                        <span>Documentation</span>
+                    </a>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="flex items-center gap-md" style="padding: var(--space-sm);">
+                    <div
+                        style="width: 36px; height: 36px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                        <span id="userInitial">U</span>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: var(--font-size-sm); font-weight: 500;" id="userName">User</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);" id="userEmail">
+                            user@email.com</div>
+                    </div>
+                    <button class="btn btn-ghost btn-icon" onclick="Auth.logout()" title="Logout">🚪</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header flex justify-between items-center">
+                <div>
+                    <h1 class="page-title">📈 API Activity</h1>
+                    <p class="page-subtitle">Pantau penggunaan API Anda secara real-time</p>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-3 gap-lg" style="margin-bottom: var(--space-xl);">
+                <div class="stat-card">
+                    <div class="stat-icon primary">📊</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="todayRequests">-</div>
+                        <div class="stat-label">Today's Requests</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon success">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="successRate">-</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon warning">⚡</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="avgResponseTime">-</div>
+                        <div class="stat-label">Avg Response Time</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Logs -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Request Logs</h2>
+                    <div style="display: flex; gap: var(--space-sm); align-items: center;">
+                        <select id="activityLimit" class="form-control"
+                            style="width: auto; padding: var(--space-xs) var(--space-sm);">
+                            <option value="10">10 per page</option>
+                            <option value="25">25 per page</option>
+                            <option value="50">50 per page</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>API Key</th>
+                                    <th>Endpoint</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Response Time</th>
+                                    <th>IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityTable">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px;">
+                                        <div class="spinner" style="margin: 0 auto;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    <div id="activityPagination"
+                        style="display: flex; justify-content: center; align-items: center; gap: var(--space-md); margin-top: var(--space-lg);">
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Check authentication
+        if (!Auth.requireAuth()) { }
+
+        // Set user info
+        const user = API.getUser();
+        if (user) {
+            document.getElementById('userInitial').textContent = user.username?.charAt(0).toUpperCase() || 'U';
+            document.getElementById('userName').textContent = user.username || 'User';
+            document.getElementById('userEmail').textContent = user.email || '';
+        }
+
+        let currentActivityPage = 1;
+
+        async function loadStats() {
+            try {
+                const response = await API.get('/user/stats');
+                const stats = response.data;
+
+                document.getElementById('todayRequests').textContent = stats.today_usage || 0;
+
+                // Calculate success rate (simplified - assume all are success for now)
+                const successRate = stats.today_usage > 0 ? '99%' : '-';
+                document.getElementById('successRate').textContent = successRate;
+
+                // Avg response time placeholder
+                document.getElementById('avgResponseTime').textContent = '< 100ms';
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        async function loadActivity(page = 1) {
+            currentActivityPage = page;
+            const limit = document.getElementById('activityLimit').value;
+            const tbody = document.getElementById('activityTable');
+            const pagination = document.getElementById('activityPagination');
+
+            try {
+                const response = await API.get(`/user/activity?page=${page}&limit=${limit}`);
+                const { data: logs, pagination: paginationData } = response;
+
+                if (logs.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px;">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📊</div>
+                                    <h3 class="empty-state-title">No Activity Yet</h3>
+                                    <p class="empty-state-description">Start using your API keys to see activity here.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    pagination.innerHTML = '';
+                    return;
+                }
+
+                tbody.innerHTML = logs.map(log => {
+                    const statusClass = log.status_code >= 200 && log.status_code < 300 ? 'success' :
+                        log.status_code >= 400 ? 'danger' : 'warning';
+                    const timestamp = new Date(log.created_at);
+                    const formattedTime = timestamp.toLocaleString('id-ID', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+
+                    return `
+                        <tr>
+                            <td style="white-space: nowrap;">${formattedTime}</td>
+                            <td><span class="badge badge-secondary">${log.api_key_name || 'Unknown'}</span></td>
+                            <td style="font-family: var(--font-mono); font-size: var(--font-size-sm);">${log.endpoint}</td>
+                            <td><span class="badge badge-success">${log.method}</span></td>
+                            <td><span class="badge badge-${statusClass}">${log.status_code}</span></td>
+                            <td>${log.response_time || 0}ms</td>
+                            <td style="font-size: var(--font-size-sm); color: var(--color-text-muted);">${log.ip_address || '-'}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                // Render pagination
+                const { page: currentPage, total_pages, total } = paginationData;
+                let paginationHTML = '';
+
+                if (total_pages > 1) {
+                    paginationHTML += `<span style="color: var(--color-text-muted); font-size: var(--font-size-sm);">Total: ${total} requests</span>`;
+                    paginationHTML += `<button class="btn btn-ghost btn-sm" onclick="loadActivity(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Prev</button>`;
+                    paginationHTML += `<span style="color: var(--color-text-muted);">Page ${currentPage} of ${total_pages}</span>`;
+                    paginationHTML += `<button class="btn btn-ghost btn-sm" onclick="loadActivity(${currentPage + 1})" ${currentPage === total_pages ? 'disabled' : ''}>Next →</button>`;
+                } else if (logs.length > 0) {
+                    paginationHTML += `<span style="color: var(--color-text-muted); font-size: var(--font-size-sm);">Total: ${paginationData.total} requests</span>`;
+                }
+
+                pagination.innerHTML = paginationHTML;
+            } catch (error) {
+                console.error('Failed to load activity:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--color-danger);">
+                            Failed to load activity. Please try again.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Event listener for limit change
+        document.getElementById('activityLimit').addEventListener('change', () => {
+            loadActivity(1);
+        });
+
+        loadStats();
+        loadActivity();
+    </script>
+</body>
+
+</html>

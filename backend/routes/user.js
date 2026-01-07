@@ -190,4 +190,74 @@ router.get('/stats', async (req, res, next) => {
     }
 });
 
+/**
+ * GET /user/activity
+ * Get recent API activity logs for the user
+ */
+router.get('/activity', async (req, res, next) => {
+    try {
+        const { page = 1, limit = 10, from_date, to_date } = req.query;
+        const pageNum = Math.max(1, parseInt(page));
+        const limitNum = Math.min(50, Math.max(1, parseInt(limit)));
+        const offset = (pageNum - 1) * limitNum;
+
+        let conditions = ['ak.user_id = ?'];
+        let params = [req.user.id];
+
+        // Date filters
+        if (from_date) {
+            conditions.push('DATE(al.created_at) >= ?');
+            params.push(from_date);
+        }
+        if (to_date) {
+            conditions.push('DATE(al.created_at) <= ?');
+            params.push(to_date);
+        }
+
+        const whereClause = conditions.join(' AND ');
+
+        // Get total count
+        const [countResult] = await pool.query(
+            `SELECT COUNT(*) as total 
+             FROM api_logs al 
+             JOIN api_keys ak ON al.api_key_id = ak.id 
+             WHERE ${whereClause}`,
+            params
+        );
+        const total = countResult[0].total;
+
+        // Get activity logs
+        const [logs] = await pool.query(
+            `SELECT 
+                al.id,
+                al.endpoint,
+                al.method,
+                al.status_code,
+                al.response_time,
+                al.ip_address,
+                al.created_at,
+                ak.name as api_key_name
+             FROM api_logs al 
+             JOIN api_keys ak ON al.api_key_id = ak.id 
+             WHERE ${whereClause}
+             ORDER BY al.created_at DESC
+             LIMIT ? OFFSET ?`,
+            [...params, limitNum, offset]
+        );
+
+        res.json({
+            success: true,
+            data: logs,
+            pagination: {
+                page: pageNum,
+                limit: limitNum,
+                total,
+                total_pages: Math.ceil(total / limitNum)
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
 module.exports = router;

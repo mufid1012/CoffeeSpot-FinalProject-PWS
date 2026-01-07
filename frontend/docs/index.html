@@ -244,6 +244,166 @@
                 padding: var(--space-lg);
             }
         }
+
+        /* API Sandbox Styles */
+        .sandbox-container {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .sandbox-header {
+            background: var(--color-bg-secondary);
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .sandbox-header h4 {
+            margin: 0;
+            font-size: var(--font-size-base);
+        }
+
+        .sandbox-body {
+            padding: var(--space-lg);
+        }
+
+        .sandbox-row {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .sandbox-field {
+            flex: 1;
+        }
+
+        .sandbox-field label {
+            display: block;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .sandbox-field select,
+        .sandbox-field input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-family: var(--font-mono);
+            font-size: var(--font-size-sm);
+        }
+
+        .sandbox-field select:focus,
+        .sandbox-field input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .sandbox-params {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+
+        .sandbox-actions {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .sandbox-response {
+            margin-top: var(--space-lg);
+        }
+
+        .sandbox-response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-sm);
+        }
+
+        .sandbox-response-header h5 {
+            margin: 0;
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        .sandbox-status {
+            font-size: var(--font-size-xs);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+        }
+
+        .sandbox-status.success {
+            background: var(--color-success-bg);
+            color: var(--color-success);
+        }
+
+        .sandbox-status.error {
+            background: var(--color-danger-bg);
+            color: var(--color-danger);
+        }
+
+        .sandbox-status.pending {
+            background: var(--color-warning-bg);
+            color: var(--color-warning);
+        }
+
+        .sandbox-output {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .sandbox-output pre {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-primary);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .sandbox-url {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            background: var(--color-bg-secondary);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            margin-top: var(--space-md);
+        }
+
+        .sandbox-method {
+            padding: var(--space-xs) var(--space-sm);
+            background: var(--color-success-bg);
+            color: var(--color-success);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+        }
+
+        .sandbox-url code {
+            font-family: var(--font-mono);
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .sandbox-params {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -280,6 +440,9 @@
             <a href="#categories" class="docs-nav-link">Categories</a>
             <a href="#facilities" class="docs-nav-link">Facilities</a>
             <a href="#cities" class="docs-nav-link">Cities</a>
+
+            <div class="docs-nav-title">Tools</div>
+            <a href="#sandbox" class="docs-nav-link">🧪 API Sandbox</a>
         </aside>
 
         <!-- Content -->
@@ -633,6 +796,86 @@ X-RateLimit-Reset: 1704153600</code></pre>
                     </div>
                 </div>
             </section>
+
+            <!-- API Sandbox -->
+            <section id="sandbox" class="docs-section">
+                <h2>🧪 API Sandbox</h2>
+                <p>Test API endpoints langsung dari browser. Masukkan API key Anda dan pilih endpoint untuk mencoba.</p>
+
+                <div class="sandbox-container">
+                    <div class="sandbox-header">
+                        <h4>Test API Request</h4>
+                    </div>
+                    <div class="sandbox-body">
+                        <div class="sandbox-row">
+                            <div class="sandbox-field">
+                                <label for="sandbox-apikey">API Key</label>
+                                <input type="text" id="sandbox-apikey" placeholder="cs_live_xxxxxxxxxxxx">
+                            </div>
+                        </div>
+
+                        <div class="sandbox-row">
+                            <div class="sandbox-field">
+                                <label for="sandbox-endpoint">Endpoint</label>
+                                <select id="sandbox-endpoint">
+                                    <option value="/api/coffeeshops">GET /api/coffeeshops</option>
+                                    <option value="/api/coffeeshops/:id">GET /api/coffeeshops/:id</option>
+                                    <option value="/api/categories">GET /api/categories</option>
+                                    <option value="/api/facilities">GET /api/facilities</option>
+                                    <option value="/api/cities">GET /api/cities</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="sandbox-url" id="sandbox-url-display">
+                            <span class="sandbox-method">GET</span>
+                            <code id="sandbox-full-url">http://localhost:3000/api/coffeeshops</code>
+                        </div>
+
+                        <div class="sandbox-params" id="sandbox-params">
+                            <div class="sandbox-field">
+                                <label for="sandbox-page">page</label>
+                                <input type="number" id="sandbox-page" placeholder="1" min="1">
+                            </div>
+                            <div class="sandbox-field">
+                                <label for="sandbox-limit">limit</label>
+                                <input type="number" id="sandbox-limit" placeholder="10" min="1" max="100">
+                            </div>
+                            <div class="sandbox-field">
+                                <label for="sandbox-city">city</label>
+                                <input type="text" id="sandbox-city" placeholder="Jakarta">
+                            </div>
+                            <div class="sandbox-field">
+                                <label for="sandbox-category">category_id</label>
+                                <input type="number" id="sandbox-category" placeholder="1">
+                            </div>
+                            <div class="sandbox-field">
+                                <label for="sandbox-search">search</label>
+                                <input type="text" id="sandbox-search" placeholder="kopi">
+                            </div>
+                            <div class="sandbox-field">
+                                <label for="sandbox-id">id (untuk :id)</label>
+                                <input type="number" id="sandbox-id" placeholder="1">
+                            </div>
+                        </div>
+
+                        <div class="sandbox-actions">
+                            <button class="btn btn-primary" id="sandbox-send">🚀 Send Request</button>
+                            <button class="btn btn-secondary" id="sandbox-clear">Clear</button>
+                        </div>
+
+                        <div class="sandbox-response">
+                            <div class="sandbox-response-header">
+                                <h5>Response</h5>
+                                <span class="sandbox-status" id="sandbox-status"></span>
+                            </div>
+                            <div class="sandbox-output">
+                                <pre id="sandbox-result">// Response akan muncul di sini...</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -690,6 +933,164 @@ X-RateLimit-Reset: 1704153600</code></pre>
                 }
             });
         });
+
+        // ================================
+        // API Sandbox Functionality
+        // ================================
+        const sandboxApiKey = document.getElementById('sandbox-apikey');
+        const sandboxEndpoint = document.getElementById('sandbox-endpoint');
+        const sandboxFullUrl = document.getElementById('sandbox-full-url');
+        const sandboxParams = document.getElementById('sandbox-params');
+        const sandboxSend = document.getElementById('sandbox-send');
+        const sandboxClear = document.getElementById('sandbox-clear');
+        const sandboxStatus = document.getElementById('sandbox-status');
+        const sandboxResult = document.getElementById('sandbox-result');
+
+        const sandboxPage = document.getElementById('sandbox-page');
+        const sandboxLimit = document.getElementById('sandbox-limit');
+        const sandboxCity = document.getElementById('sandbox-city');
+        const sandboxCategory = document.getElementById('sandbox-category');
+        const sandboxSearch = document.getElementById('sandbox-search');
+        const sandboxId = document.getElementById('sandbox-id');
+
+        const BASE_URL = window.location.origin;
+
+        // Update URL display when endpoint or params change
+        function updateUrlDisplay() {
+            const endpoint = sandboxEndpoint.value;
+            let url = endpoint;
+
+            // Replace :id placeholder
+            if (endpoint.includes(':id')) {
+                const id = sandboxId.value || '1';
+                url = endpoint.replace(':id', id);
+            }
+
+            // Build query params for coffeeshops
+            if (endpoint === '/api/coffeeshops') {
+                const params = new URLSearchParams();
+                if (sandboxPage.value) params.append('page', sandboxPage.value);
+                if (sandboxLimit.value) params.append('limit', sandboxLimit.value);
+                if (sandboxCity.value) params.append('city', sandboxCity.value);
+                if (sandboxCategory.value) params.append('category_id', sandboxCategory.value);
+                if (sandboxSearch.value) params.append('search', sandboxSearch.value);
+
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+            }
+
+            sandboxFullUrl.textContent = BASE_URL + url;
+
+            // Show/hide params based on endpoint
+            if (endpoint === '/api/coffeeshops') {
+                sandboxParams.style.display = 'grid';
+            } else {
+                sandboxParams.style.display = 'none';
+            }
+        }
+
+        // Event listeners for URL update
+        sandboxEndpoint.addEventListener('change', updateUrlDisplay);
+        [sandboxPage, sandboxLimit, sandboxCity, sandboxCategory, sandboxSearch, sandboxId].forEach(input => {
+            input.addEventListener('input', updateUrlDisplay);
+        });
+
+        // Send Request
+        sandboxSend.addEventListener('click', async () => {
+            const apiKey = sandboxApiKey.value.trim();
+
+            if (!apiKey) {
+                sandboxStatus.textContent = 'API Key Required';
+                sandboxStatus.className = 'sandbox-status error';
+                sandboxResult.textContent = JSON.stringify({
+                    success: false,
+                    error: 'Masukkan API Key Anda terlebih dahulu'
+                }, null, 2);
+                return;
+            }
+
+            // Build URL
+            let endpoint = sandboxEndpoint.value;
+            if (endpoint.includes(':id')) {
+                const id = sandboxId.value || '1';
+                endpoint = endpoint.replace(':id', id);
+            }
+
+            let url = BASE_URL + endpoint;
+
+            if (sandboxEndpoint.value === '/api/coffeeshops') {
+                const params = new URLSearchParams();
+                if (sandboxPage.value) params.append('page', sandboxPage.value);
+                if (sandboxLimit.value) params.append('limit', sandboxLimit.value);
+                if (sandboxCity.value) params.append('city', sandboxCity.value);
+                if (sandboxCategory.value) params.append('category_id', sandboxCategory.value);
+                if (sandboxSearch.value) params.append('search', sandboxSearch.value);
+
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+            }
+
+            // Show pending status
+            sandboxStatus.textContent = 'Sending...';
+            sandboxStatus.className = 'sandbox-status pending';
+            sandboxResult.textContent = '// Loading...';
+            sandboxSend.disabled = true;
+
+            try {
+                const startTime = Date.now();
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'x-api-key': apiKey,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                const data = await response.json();
+
+                if (response.ok) {
+                    sandboxStatus.textContent = `${response.status} OK (${duration}ms)`;
+                    sandboxStatus.className = 'sandbox-status success';
+                } else {
+                    sandboxStatus.textContent = `${response.status} ${response.statusText} (${duration}ms)`;
+                    sandboxStatus.className = 'sandbox-status error';
+                }
+
+                sandboxResult.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                sandboxStatus.textContent = 'Error';
+                sandboxStatus.className = 'sandbox-status error';
+                sandboxResult.textContent = JSON.stringify({
+                    success: false,
+                    error: error.message || 'Network error'
+                }, null, 2);
+            } finally {
+                sandboxSend.disabled = false;
+            }
+        });
+
+        // Clear form
+        sandboxClear.addEventListener('click', () => {
+            sandboxApiKey.value = '';
+            sandboxPage.value = '';
+            sandboxLimit.value = '';
+            sandboxCity.value = '';
+            sandboxCategory.value = '';
+            sandboxSearch.value = '';
+            sandboxId.value = '';
+            sandboxEndpoint.selectedIndex = 0;
+            sandboxStatus.textContent = '';
+            sandboxStatus.className = 'sandbox-status';
+            sandboxResult.textContent = '// Response akan muncul di sini...';
+            updateUrlDisplay();
+        });
+
+        // Initial URL display
+        updateUrlDisplay();
     </script>
 </body>
 
