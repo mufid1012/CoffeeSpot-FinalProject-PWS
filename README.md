@@ -466,12 +466,15 @@ curl -X GET "http://localhost:3000/api/coffeeshops" \
 
 ### Landing Page
 Halaman utama dengan informasi tentang API dan cara memulai.
+<img width="1694" height="978" alt="image" src="https://github.com/user-attachments/assets/aa8767d6-4922-4ed2-92d3-0b7e4d187da4" />
 
 ### User Dashboard
 Dashboard untuk mengelola API keys dan melihat statistik penggunaan.
+<img width="1694" height="1013" alt="image" src="https://github.com/user-attachments/assets/09ded425-4916-4fae-a403-079fc44550cb" />
 
 ### Admin Dashboard
 Dashboard admin untuk mengelola coffee shops, users, dan melihat logs.
+<img width="1695" height="1016" alt="image" src="https://github.com/user-attachments/assets/4e511ee3-b5f6-445a-bbd4-91ecff13805c" />
 
 ---
 
