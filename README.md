@@ -496,8 +496,7 @@ Distributed under the ISC License. See `LICENSE` for more information.
 ## 📞 Contact
 
 Untuk pertanyaan dan dukungan, silakan hubungi melalui:
-- Email: support@coffeespot.id
-- Website: [coffeespot.id](https://coffeespot.id)
+- Email: mufidghibran1012@gmail.com
 
 ---
 
