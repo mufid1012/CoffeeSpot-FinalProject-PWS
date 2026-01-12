@@ -169,7 +169,7 @@ Pastikan sistem Anda sudah terinstall:
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/coffeespot-api.git
+git clone https://github.com/mufid1012/CoffeeSpot-FinalProject-PWS.git
 cd coffeespot-api
 ```
 
